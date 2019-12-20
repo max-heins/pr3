@@ -1,46 +1,30 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class CNotify extends Thread
 {
-    NotifyCounter noC;
-    NotifyCounter noC2;
+    private AtomicInteger noC;
+    private AtomicInteger noC2;
+    private OperationsParallel operations;
 
-    public CNotify(NotifyCounter noC, NotifyCounter noC2)
+    public CNotify(OperationsParallel operations)
     {
-        this.noC = noC;
-        this.noC2 = noC2;
+        this.operations = operations;
     }
 
     public void run()
     {
         Operation.C1.exec();
-        noC.setI(noC.getI()-1);
-        //System.out.println("Test");
-        sync(noC, Operation.C2);
-        noC2.setI(noC2.getI()-1);
-        sync(noC2, Operation.C3);
+        operations.noC.decrementAndGet();
+        operations.notifyCount();
+        operations.sync();
+        Operation.C2.exec();
+        operations.noC2.decrementAndGet();
+        operations.notifyCount2();
+        operations.sync2();
+        Operation.C3.exec();
+
 
     }
 
-    public void sync (NotifyCounter noC, Operation ope)
-    {
-            synchronized (this)
-            {
-                while(noC.getI()>0)
-                {
-                    System.out.println(noC.getI());
-                    try
-                    {
-                        wait();
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                System.out.println("pre");
-                notify();
-                System.out.println("post");
-                ope.exec();
-            }
 
-    }
 }

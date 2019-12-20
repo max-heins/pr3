@@ -1,14 +1,16 @@
 public class OperationsSimpleParallel
 {
-    public static void main(String... args)
-    {
+    public static void main(String... args) throws InterruptedException {
         Operation.init(args);
-        AParallel aPa = new AParallel();
-        BParallel bPa = new BParallel();
-        CParallel cPa = new CParallel();
+        final AParallel aPa = new AParallel();
+        final BParallel bPa = new BParallel();
+        final CParallel cPa = new CParallel();
         aPa.start();
         bPa.start();
         cPa.start();
+        aPa.join();
+        bPa.join();
+        cPa.join();
         System.out.println("complete");
     }
 }

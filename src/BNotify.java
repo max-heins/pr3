@@ -1,20 +1,22 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class BNotify extends Thread
 {
-    NotifyCounter NoC;
-    NotifyCounter NoC2;
+    private OperationsParallel operations;
 
-    public BNotify(NotifyCounter NoC, NotifyCounter NoC2)
+    public BNotify(OperationsParallel operations)
     {
-        this.NoC = NoC;
-        this.NoC2 = NoC2;
+        this.operations = operations;
     }
 
     public void run()
     {
         Operation.B1.exec();
-        NoC.setI(NoC.getI()-1);
+        operations.noC.decrementAndGet();
+        operations.notifyCount();
         Operation.B2.exec();
-        NoC2.setI(NoC2.getI()-1);
+        operations.noC2.decrementAndGet();
+        operations.notifyCount2();
         Operation.B3.exec();
     }
 }
